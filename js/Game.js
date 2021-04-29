@@ -83,15 +83,34 @@ class Game {
       }
 
     }
-
+    if(keyIsDown('space') && player.index !== null){
+      playState = 'nitro'
+    }
     if(keyIsDown(UP_ARROW) && player.index !== null){
-      player.distance +=10
+      if(player.distance < (5*displayHeight-100)/2){
+        if(playState == 'nitro'){
+          player.distance +=15;
+        }
+        else{
+          player.distance +=10;
+        }
+       }
+      else{
+        if(playState == 'nitro'){
+          player.distance +=30;
+        }
+        else{
+          player.distance +=20;
+        }
+      }
+      
       player.update();
     }
 
     if(player.distance > 5*displayHeight-100){
       gameState = 2;
       player.rank = carsAtEnd+1;
+      player.update();
       Player.updateCarsAtEnd(player.rank);
     }
    
@@ -101,5 +120,51 @@ class Game {
   end(){
     console.log("Game Ended");
     console.log(player.rank);
+    if(allPlayers !== undefined){
+      background(rgb(198,135,103));
+      image(track, 0,-displayHeight*4,displayWidth, displayHeight*5);
+      
+      //var display_position = 100;
+      
+      //index of the array
+      var index = 0;
+
+      //x and y position of the cars
+      var x = 200 ;
+      var y;
+
+      for(var plr in allPlayers){
+        //add 1 to the index for every loop
+        index = index + 1 ;
+        if(allPlayers[plr].rank != 0){
+          var element = createElement('h3');
+          element.html(allPlayers[plr].name+' '+allPlayers[plr].rank);
+          element.position(displayWidth/2,allPlayers[plr].rank*30);
+          if(index == player.index){
+            element.style('color','yellow')
+          }
+        }
+        //position the cars a little away from each other in x direction
+        x = x + 225;
+        //use data form the database to display the cars in y direction
+        y = displayHeight - allPlayers[plr].distance;
+        cars[index-1].x = x;
+        cars[index-1].y = y;
+
+        if (index === player.index){
+          cars[index - 1].shapeColor = "red";
+          camera.position.x = displayWidth/2;
+          camera.position.y = cars[index-1].y;
+          stroke(10);
+          fill("red");
+          ellipse(x,y,60,60);
+        }
+       
+        //textSize(15);
+        //text(allPlayers[plr].name + ": " + allPlayers[plr].distance, 120,display_position)
+      }
+
+    }
+    drawSprites();
   }
 }

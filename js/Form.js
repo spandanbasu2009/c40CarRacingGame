@@ -38,6 +38,7 @@ class Form {
       game.update(0);
       player.updateCount(0);
       database.ref('players').remove();
+      Player.updateCarsAtEnd(0);
     })
 
   }
